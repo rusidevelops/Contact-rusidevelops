@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rusi Davidov</title>
+
+
+
+  <style>
+
+    body{
+      background: rgb(0, 0, 0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      min-height: 94vh;
+      font-family: monospace;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    form{
+      color: white;
+       background: transparent;
+        backdrop-filter: blur(3px);
+      width: 100%;
+      max-width: 400px; /* important */
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgb(56, 54, 54);
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+
+    input, textarea{
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      box-sizing: border-box;
+      transition: all .2s;
+      border: none;
+    }
+
+    textarea{
+      min-height: 100px;
+      resize: none;
+    }
+
+    p{
+      font-size: 16px;
+      margin: 10px 0 5px;
+      margin-bottom: 6px;
+    }
+
+    button{
+      height: 40px;
+      margin-top: 15px;
+      border-radius: 10px;
+      border: none;
+      background: rgb(122, 122, 229);
+      width: 100%;
+      color: white;
+      font-family: system-ui, sans-serif;
+      cursor: pointer;
+      transition: all .1s;
+    }
+
+    button:hover{
+      opacity: 0.78;
+    }
+
+    @media (max-width: 400px){
+      form{
+        padding: 15px;
+      }
+
+      p{
+        font-size: 14px;
+      }
+
+      textarea:hover, input:hover{
+        transform: none;
+      }
+    }
+    textarea{
+      transition: all .2s;
+    }
+
+    textarea:hover{
+      transform: translateY(-6px);
+    }
+
+    input:hover{
+      transform: translateY(-6px);
+    }
+
+    #matrix{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: black;
+}
+  </style>
+</head>
+
+<body>
+
+<form action="https://formspree.io/f/xnnldozn" method="POST">
+  <label>
+    <p>Your email:</p>
+    <input type="email" name="email" required>
+  </label>
+
+  <label>
+    <p>Your message:</p>
+    <textarea name="message" required></textarea>
+  </label>
+
+  <button type="submit">Send message</button>
+</form>
+<canvas id="matrix"></canvas>
+
+
+<script>
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+
+// Set canvas size
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Characters for the Matrix effect
+const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const fontSize = 14;
+const columns = Math.floor(canvas.width / fontSize);
+
+// Track the drop position for each column
+const drops = Array.from({ length: columns }).fill(1);
+
+// Main draw function
+function draw() {
+  // Step 1: Draw a translucent black rectangle to create trailing effect
+  ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; // low alpha keeps background dark
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Step 2: Set the text color for letters
+  ctx.fillStyle = "#00FF00"; // neon green
+  ctx.font = fontSize + "px monospace";
+
+  // Step 3: Draw letters for each column
+  for (let i = 0; i < drops.length; i++) {
+    const text = letters.charAt(Math.floor(Math.random() * letters.length));
+    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+    // Reset drop to top randomly after reaching bottom
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+      drops[i] = 0;
+    }
+
+    // Move drop down
+    drops[i]++;
+  }
+}
+
+// Draw every ~33ms (~30fps)
+setInterval(draw, 33);
+
+// Update canvas size when window is resized
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+</body>
+</html>
